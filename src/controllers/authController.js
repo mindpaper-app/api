@@ -6,42 +6,42 @@ const JWT_SECRET = process.env.JWT_SECRET
 
 const login = async(req, res) => {
     const { username, password } = req.body
-    if(!username || !password) return res.status(400).json({ message: 'Uzupełnij wszystkie pola!' })
+    if(!username || !password) return res.status(400).json({ message: 'Fill all fields!' })
 
     try {
         const existingUser = await User.findOne({ username })
-        if (!existingUser) return res.status(400).json({ message: 'Niepoprawny login lub hasło!' })
+        if (!existingUser) return res.status(400).json({ message: 'Invalid username or password!' })
 
         const isPasswordCorrect = await bcrypt.compare(password, existingUser.password)
-        if (!isPasswordCorrect) return res.status(400).json({ message: 'Niepoprawny login lub hasło!' })
+        if (!isPasswordCorrect) return res.status(400).json({ message: 'Invalid username or password!' })
 
         const token = jwt.sign({ id: existingUser._id }, JWT_SECRET, { expiresIn: '6h' })
 
         res.status(200).json({
-            message: 'Zalogowano pomyślnie!',
+            message: 'Logged in successfully!',
             token
         })
     } catch (error) {
-        res.status(500).json({ message: 'Coś poszło nie tak!' })
+        res.status(500).json({ message: 'Something went wrong!' })
     }
 }
 
 const register = async(req, res) => {
     const { username, password } = req.body
-    if(!username || !password) return res.status(400).json({ message: 'Uzupełnij wszystkie pola!' })
+    if(!username || !password) return res.status(400).json({ message: 'Fill all fields!' })
 
     try {
         const existingUser = await User.findOne({ username })
-        if (existingUser) return res.status(400).json({ message: 'Uzytkownik juz istnieje!' })
+        if (existingUser) return res.status(400).json({ message: 'Username is taken!' })
 
         const hashedPassword = await bcrypt.hash(password, 12)
         const result = await User.create({ username, password: hashedPassword })
 
         res.status(200).json({
-            message: 'Stworzono użytkownika pomyślnie!',
+            message: 'Created account successfully!',
         })
     } catch (error) {
-        res.status(500).json({ message: 'Coś poszło nie tak!' })
+        res.status(500).json({ message: 'Something went wrong!' })
     }
 }
 

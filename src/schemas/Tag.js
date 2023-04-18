@@ -4,11 +4,11 @@ const TagSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
     },
-    emoji: {
-        type: String,
-        required: false,
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     }
 })
 
